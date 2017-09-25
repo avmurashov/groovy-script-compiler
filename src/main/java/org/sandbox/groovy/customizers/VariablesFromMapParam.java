@@ -69,9 +69,12 @@ public class VariablesFromMapParam extends CompilationCustomizer {
     }
 
     private Statement variableDefinition(Map.Entry<String, ClassNode> entry) {
+        final String varName = entry.getKey();
+        final ClassNode varType = entry.getValue();
+
         return declS(
-                varX(entry.getKey(), entry.getValue()),
-                castX(entry.getValue(), propX(varX(mapParamName), entry.getKey()))
+                varX(varName, varType),
+                castX( varType, callX( varX(mapParamName), "get", args(constX(varName)) ))
         );
     }
 }
