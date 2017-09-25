@@ -51,12 +51,14 @@ public class GroovyCompiler implements AutoCloseable {
                 int compilerSeqNo,
                 int compilationSeqNo
         ) {
-            this.configuration = new CompilerConfiguration();
             this.classLoader = groovyClassLoader;
             this.code = code;
 
             this.compilerSeqNo = compilerSeqNo;
             this.compilationSeqNo = compilationSeqNo;
+
+            this.configuration = new CompilerConfiguration();
+            this.configuration.setTargetBytecode(Runtime.class.getPackage().getSpecificationVersion());
         }
 
         public GroovyCompilation with(CompilationCustomizer... compilationCustomizers) {
