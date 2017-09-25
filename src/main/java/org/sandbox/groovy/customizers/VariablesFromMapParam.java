@@ -3,6 +3,8 @@ package org.sandbox.groovy.customizers;
 import org.codehaus.groovy.ast.ClassNode;
 import org.codehaus.groovy.ast.MethodNode;
 import org.codehaus.groovy.ast.Parameter;
+import org.codehaus.groovy.ast.expr.MethodCallExpression;
+import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.codehaus.groovy.ast.stmt.BlockStatement;
 import org.codehaus.groovy.ast.stmt.Statement;
 import org.codehaus.groovy.classgen.GeneratorContext;
@@ -17,22 +19,28 @@ import java.util.function.Supplier;
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
-import static org.codehaus.groovy.ast.tools.GeneralUtils.*;
+import static org.codehaus.groovy.ast.tools.GeneralUtils.args;
+import static org.codehaus.groovy.ast.tools.GeneralUtils.callX;
+import static org.codehaus.groovy.ast.tools.GeneralUtils.castX;
+import static org.codehaus.groovy.ast.tools.GeneralUtils.constX;
+import static org.codehaus.groovy.ast.tools.GeneralUtils.declS;
+import static org.codehaus.groovy.ast.tools.GeneralUtils.varX;
 import static org.codehaus.groovy.control.CompilePhase.CONVERSION;
+import static org.objectweb.asm.Opcodes.ACC_FINAL;
 
 public class VariablesFromMapParam extends CompilationCustomizer {
     private final Supplier<MethodNode> methodNodeSupplier;
     private final String mapParamName;
-    private final Map<String, ClassNode> variableDefinitons;
+    private final Map<String, ClassNode> variableDefinitions;
 
     public VariablesFromMapParam(
-            Supplier<MethodNode> methodNodeSupplier, String mapParamName, Map<String, ClassNode> variableDefinitons
+            Supplier<MethodNode> methodNodeSupplier, String mapParamName, Map<String, ClassNode> variableDefinitions
     ) {
         super(CONVERSION);
 
         this.methodNodeSupplier = methodNodeSupplier;
         this.mapParamName = mapParamName;
-        this.variableDefinitons = variableDefinitons;
+        this.variableDefinitions = variableDefinitions;
     }
 
     @Override
@@ -49,7 +57,7 @@ public class VariablesFromMapParam extends CompilationCustomizer {
 
         final BlockStatement methodDefinition = (BlockStatement) methodNode.getCode();
 
-        final List<Statement> varDefinitions = variableDefinitons.entrySet().stream()
+        final List<Statement> varDefinitions = variableDefinitions.entrySet().stream()
                 .map(this::variableDefinition).collect(toList());
 
         methodDefinition.getStatements().addAll(0, varDefinitions);
@@ -72,9 +80,11 @@ public class VariablesFromMapParam extends CompilationCustomizer {
         final String varName = entry.getKey();
         final ClassNode varType = entry.getValue();
 
-        return declS(
-                varX(varName, varType),
-                castX( varType, callX( varX(mapParamName), "get", args(constX(varName)) ))
-        );
+        final VariableExpression varX = varX(varName, varType);
+        varX.setModifiers(ACC_FINAL);
+
+        final MethodCallExpression mapGetX = callX( varX(mapParamName), "get", args(constX(varName)) );
+
+        return declS(varX, castX(varType, mapGetX));
     }
 }
