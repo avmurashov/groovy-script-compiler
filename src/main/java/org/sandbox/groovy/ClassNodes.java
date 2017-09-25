@@ -5,7 +5,9 @@ import org.codehaus.groovy.ast.GenericsType;
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
+import static org.codehaus.groovy.ast.ClassHelper.OBJECT_TYPE;
 import static org.codehaus.groovy.ast.ClassHelper.make;
+import static org.codehaus.groovy.ast.tools.GenericsUtils.buildWildcardType;
 import static org.codehaus.groovy.ast.tools.GenericsUtils.makeClassSafeWithGenerics;
 
 public class ClassNodes {
@@ -24,6 +26,14 @@ public class ClassNodes {
                 .toArray(GENERICS_TYPES);
 
         return makeClassSafeWithGenerics(rowClassNode, safeGenericTypes);
+    }
+
+    public static GenericsType wildcard(ClassNode... upperBounds) {
+        if (upperBounds == null || upperBounds.length == 0) {
+            return buildWildcardType(OBJECT_TYPE);
+        } else {
+            return buildWildcardType(upperBounds);
+        }
     }
 
     private static ClassNode safeClassNode(Object object) {

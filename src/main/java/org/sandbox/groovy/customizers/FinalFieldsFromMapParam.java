@@ -24,6 +24,7 @@ import static org.objectweb.asm.Opcodes.ACC_FINAL;
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static org.sandbox.groovy.ClassNodes.classNode;
+import static org.sandbox.groovy.ClassNodes.wildcard;
 
 public class FinalFieldsFromMapParam extends CompilationCustomizer {
     private final Map<String, ClassNode> fieldDefinitions;
@@ -55,7 +56,7 @@ public class FinalFieldsFromMapParam extends CompilationCustomizer {
         });
 
         final Parameter[] parameters = {
-                new Parameter(classNode(Map.class, String.class, Object.class), "params")
+                new Parameter(classNode(Map.class, String.class, wildcard()), "params")
         };
 
         classNode.addConstructor(ACC_PUBLIC, parameters, new ClassNode[0], code);

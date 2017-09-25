@@ -16,6 +16,7 @@ import java.util.function.ToDoubleFunction;
 import static java.util.Arrays.asList;
 import static org.codehaus.groovy.ast.ClassHelper.double_TYPE;
 import static org.sandbox.groovy.ClassNodes.classNode;
+import static org.sandbox.groovy.ClassNodes.wildcard;
 
 public class GroovyCompilerTest {
     public static void main(String[] args) throws Exception {
@@ -26,7 +27,7 @@ public class GroovyCompilerTest {
 
             final PojoClass pojoClass = new PojoClass();
 
-            final ClassNode iface = classNode(ToDoubleFunction.class, classNode(Map.class, String.class, Object.class));
+            final ClassNode iface = classNode(ToDoubleFunction.class, classNode(Map.class, String.class, wildcard()));
 //            final ClassNode iface = classNode(MyFn.class);
 
             final SamInterfaceImplementation samImpl = new SamInterfaceImplementation(iface);
