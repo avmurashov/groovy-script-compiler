@@ -84,7 +84,6 @@ public class GroovyCompiler implements AutoCloseable {
                     classLoader.defineClass(groovyClass.getName(), groovyClass.getBytes());
                 }
 
-                classLoader.parseClass("");
                 return classLoader.loadClass(unit.getFirstClassNode().getName());
 
             } catch (ClassNotFoundException e) {
