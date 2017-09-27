@@ -2,12 +2,7 @@ package org.sandbox.groovy;
 
 import com.google.common.collect.ImmutableMap;
 import org.codehaus.groovy.ast.ClassNode;
-import org.codehaus.groovy.control.customizers.ImportCustomizer;
-import org.sandbox.groovy.customizers.FinalFieldsFromMapParam;
-import org.sandbox.groovy.customizers.MethodParamNames;
-import org.sandbox.groovy.customizers.PojoClass;
 import org.sandbox.groovy.customizers.SamInterfaceImplementation;
-import org.sandbox.groovy.customizers.VariablesFromMapParam;
 
 import java.lang.reflect.Constructor;
 import java.util.Map;
@@ -17,36 +12,31 @@ import static java.util.Arrays.asList;
 import static org.codehaus.groovy.ast.ClassHelper.double_TYPE;
 import static org.sandbox.groovy.ClassNodes.classNode;
 import static org.sandbox.groovy.ClassNodes.wildcard;
+import static org.sandbox.groovy.Customizers.fieldsFromMap;
+import static org.sandbox.groovy.Customizers.paramNames;
+import static org.sandbox.groovy.Customizers.pojoClass;
+import static org.sandbox.groovy.Customizers.samImplementation;
+import static org.sandbox.groovy.Customizers.staticImports;
+import static org.sandbox.groovy.Customizers.varsFromMap;
 
 public class GroovyCompilerTest {
     public static void main(String[] args) throws Exception {
         try (final GroovyCompiler compiler = new GroovyCompiler()) {
-
-            final ImportCustomizer imports = new ImportCustomizer();
-            imports.addStaticStars(Math.class.getCanonicalName());
-
-            final PojoClass pojoClass = new PojoClass();
-
             final ClassNode iface = classNode(ToDoubleFunction.class, classNode(Map.class, String.class, wildcard()));
 //            final ClassNode iface = classNode(MyFn.class);
 
-            final SamInterfaceImplementation samImpl = new SamInterfaceImplementation(iface);
-            final MethodParamNames paramNames = new MethodParamNames(samImpl::getSamImpl, "params");
-            final FinalFieldsFromMapParam fieldsFromMap = new FinalFieldsFromMapParam(ImmutableMap.of(
-                    "C", double_TYPE
-            ));
-            final VariablesFromMapParam varsFromMap = new VariablesFromMapParam(samImpl::getSamImpl, "params", ImmutableMap.of(
-                    "A", double_TYPE,
-                    "B", double_TYPE
-            ));
+            final SamInterfaceImplementation samImpl = samImplementation(iface);
 
             final Class<?> clazz = compiler.compile("A + sqrt(B) - 1 + C\n")
-                    .with(imports)
-                    .with(pojoClass)
-                    .with(fieldsFromMap)
-                    .with(samImpl)
-                    .with(paramNames)
-                    .with(varsFromMap)
+                    .with( staticImports(Math.class, "sqrt") )
+                    .with( pojoClass() )
+                    .with( fieldsFromMap(ImmutableMap.of("C", double_TYPE)) )
+                    .with( samImpl )
+                    .with( paramNames(samImpl::getSamImpl, "params") )
+                    .with( varsFromMap(samImpl::getSamImpl, "params", ImmutableMap.of(
+                            "A", double_TYPE,
+                            "B", double_TYPE
+                    )) )
                     .toClass();
 
             System.out.println("Class: " + clazz.getCanonicalName());
