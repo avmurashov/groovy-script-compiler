@@ -10,9 +10,28 @@ import static org.codehaus.groovy.ast.ClassHelper.make;
 import static org.codehaus.groovy.ast.tools.GenericsUtils.buildWildcardType;
 import static org.codehaus.groovy.ast.tools.GenericsUtils.makeClassSafeWithGenerics;
 
+/**
+ * Utilities for the {@link ClassNode} objects construction.
+ *
+ * @see #classNode(Class, Object...) classNode
+ * @see #wildcard(ClassNode...)
+ */
 public class ClassNodes {
     private static final GenericsType[] GENERICS_TYPES = {};
 
+    /**
+     * Constructs {@code ClassNode} that represents the given Java class.
+     *
+     * @param clazz Target class to construct {@code ClassNode} for.
+     * @param genericTypes Generic type arguments. Should be provided if the target class is a generic class. Number and
+     *                     order of generic type arguments should match generic type declaration. Supported:
+     *                     <ul>
+     *                     <li> {@link Class} </li>
+     *                     <li> {@link ClassNode} </li>
+     *                     <li> {@link GenericsType} </li>
+     *                     </ul>
+     * @return {@code ClassNode} that represents the given Java class.
+     */
     public static ClassNode classNode(Class<?> clazz, Object... genericTypes) {
         final ClassNode rowClassNode = make(clazz);
 
@@ -28,6 +47,12 @@ public class ClassNodes {
         return makeClassSafeWithGenerics(rowClassNode, safeGenericTypes);
     }
 
+    /**
+     * Constructs {@code GenericsType} that represents a wildcard.
+     *
+     * @param upperBounds Upper bounds for wildcard, if missed, the {@link Object} is taken as upper bound.
+     * @return {@code GenericsType} that represents a wildcard.
+     */
     public static GenericsType wildcard(ClassNode... upperBounds) {
         if (upperBounds == null || upperBounds.length == 0) {
             return buildWildcardType(OBJECT_TYPE);
