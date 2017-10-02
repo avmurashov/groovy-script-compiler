@@ -19,11 +19,33 @@ import static org.codehaus.groovy.ast.tools.GenericsUtils.createGenericsSpec;
 import static org.codehaus.groovy.control.CompilePhase.CONVERSION;
 import static org.objectweb.asm.Opcodes.ACC_ABSTRACT;
 
+/**
+ * {@link CompilationCustomizer} that converts Groovy script to a Single Abstract Method (Functional) interface
+ * implementation.
+ * <p>
+ *     The method, generated to implement SAM, may be accessed via {@link #getSamImpl() samImpl} property. It is an
+ *     error to access this property before the given customizer is applied. Please make sure that you call it only for
+ *     customizers, executed after this one, i.e. those that are called on later phases, or called on the same phase but
+ *     registered after the given customizer.
+ * </p>
+ * <p>
+ *     This customizer is executed at {@link org.codehaus.groovy.control.CompilePhase#CONVERSION CONVERSION} phase.
+ * </p>
+ *
+ * @see #SamInterfaceImplementation(ClassNode) constructor
+ */
 public class SamInterfaceImplementation extends CompilationCustomizer {
     private final ClassNode samInterface;
 
     private MethodNode samImpl = null;
 
+    /**
+     * Constructs {@code SamInterfaceImplementation}, configured to implement the given SAM interface.
+     *
+     * @param samInterface
+     * {@code ClassNode}, representing Java interface with Single Abstract Method. Generics of any complexity are
+     * supported, e.g. {@code Function<Map<String, ? extends Number>, BigDecimal>}.
+     */
     public SamInterfaceImplementation(ClassNode samInterface) {
         super(CONVERSION);
 
@@ -63,6 +85,17 @@ public class SamInterfaceImplementation extends CompilationCustomizer {
         classNode.addMethod(samImpl);
     }
 
+    /**
+     * Returns {@code MethodNode}, describing the Single Abstract Method implementation.
+     * <p>
+     *     It is an error to access this property before the given customizer is {@link #call(SourceUnit,
+     *     GeneratorContext, ClassNode) called}. Please make sure you access it only for those customizers that are
+     *     registered to be called after this customizer.
+     * </p>
+     *
+     * @return {@code MethodNode}, describing the SAM method implementation.
+     * @throws IllegalStateException If this property is accessed before the given customizer is called.
+     */
     public MethodNode getSamImpl() throws IllegalStateException {
         if (isNull(samImpl)) {
             throw new IllegalStateException(
