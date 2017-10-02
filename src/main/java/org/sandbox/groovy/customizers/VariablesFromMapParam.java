@@ -28,11 +28,35 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.varX;
 import static org.codehaus.groovy.control.CompilePhase.CONVERSION;
 import static org.objectweb.asm.Opcodes.ACC_FINAL;
 
+/**
+ * {@link CompilationCustomizer} that defines typed local variables based on the method parameter of type {@code
+ * Map<String, ?>}.
+ * <p>
+ *     This customizer is executed at {@link org.codehaus.groovy.control.CompilePhase#CONVERSION CONVERSION} phase.
+ * </p>
+ *
+ * @see #VariablesFromMapParam(Supplier, String, Map) constructor
+ */
 public class VariablesFromMapParam extends CompilationCustomizer {
     private final Supplier<MethodNode> methodNodeSupplier;
     private final String mapParamName;
     private final Map<String, ClassNode> variableDefinitions;
 
+    /**
+     * Constructs {@code VariablesFromMapParam}, configured to declare typed local variables based on the method
+     * parameter of type {@code Map<String, ?>}.
+     *
+     * @param methodNodeSupplier
+     * Supplier of the {@code MethodNode} to adjust with typed local variables. Provided {@code MethodNode} must declare
+     * parameter with name, specified by {@code mapParamName}, and should have a type, assignable to
+     * {@code Map<String, ?>}.
+     * @param mapParamName
+     * Name of the formal parameter of type {@code Map<String, ?>} that should be used to initialize
+     * local variables from.
+     * @param variableDefinitions
+     * Variable definitions in the form of map, where the key defines both local variable name and the key in the map,
+     * referred by {@code mapParamName}, and the value defines local variable type.
+     */
     public VariablesFromMapParam(
             Supplier<MethodNode> methodNodeSupplier, String mapParamName, Map<String, ClassNode> variableDefinitions
     ) {

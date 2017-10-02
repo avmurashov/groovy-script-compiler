@@ -30,7 +30,7 @@ public class MethodParamNames extends CompilationCustomizer {
      *
      * @param methodNodeSupplier
      * Supplier of the {@code MethodNode} to adjust with method parameter names. Provided
-     * {@code MethodNode} should declare exactly the same number of formal parameters, as the number of parameter names
+     * {@code MethodNode} must declare exactly the same number of formal parameters, as the number of parameter names
      * specified.
      * @param paramNames
      * Names to assign to formal parameters of the supplied {@code MethodNode}. Names are assigned in order, from first
