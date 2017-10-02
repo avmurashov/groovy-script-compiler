@@ -11,6 +11,17 @@ import static java.util.stream.Collectors.toList;
 import static org.codehaus.groovy.ast.ClassHelper.OBJECT_TYPE;
 import static org.codehaus.groovy.control.CompilePhase.CONVERSION;
 
+/**
+ * {@code CompilationCustomizer} that drops superclass, constructor and method declarations from the main class of the
+ * currently compiled module.
+ * <p>
+ *     This is handy when you need to compile Groovy script, but do not want the resulting class to extend
+ *     {@link groovy.lang.Script Script} class and declare fields and methods, related to Groovy scripts support.
+ * </p>
+ * <p>
+ *     This customizer is executed at {@link org.codehaus.groovy.control.CompilePhase#CONVERSION CONVERSION} phase.
+ * </p>
+ */
 public class PojoClass extends CompilationCustomizer {
     public PojoClass() {
         super(CONVERSION);
