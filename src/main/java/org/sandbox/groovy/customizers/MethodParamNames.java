@@ -13,10 +13,29 @@ import java.util.function.Supplier;
 import static java.lang.String.format;
 import static org.codehaus.groovy.control.CompilePhase.CONVERSION;
 
+/**
+ * {@link CompilationCustomizer} that assigns specified names to the given method's formal parameters.
+ * <p>
+ *     This customizer is executed at {@link org.codehaus.groovy.control.CompilePhase#CONVERSION CONVERSION} phase.
+ * </p>
+ *
+ * @see #MethodParamNames(Supplier, String...) constructor
+ */
 public class MethodParamNames extends CompilationCustomizer {
     private final Supplier<MethodNode> methodNodeSupplier;
     private final String[] paramNames;
 
+    /**
+     * Constructs {@code MethodParamNames}, configured to assign the specified names to the method formal parameters.
+     *
+     * @param methodNodeSupplier
+     * Supplier of the {@code MethodNode} to adjust with method parameter names. Provided
+     * {@code MethodNode} should declare exactly the same number of formal parameters, as the number of parameter names
+     * specified.
+     * @param paramNames
+     * Names to assign to formal parameters of the supplied {@code MethodNode}. Names are assigned in order, from first
+     * formal parameter to last formal parameter.
+     */
     public MethodParamNames(Supplier<MethodNode> methodNodeSupplier, String... paramNames) {
         super(CONVERSION);
 
