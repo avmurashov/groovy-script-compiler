@@ -26,9 +26,26 @@ import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static org.sandbox.groovy.ClassNodes.classNode;
 import static org.sandbox.groovy.ClassNodes.wildcard;
 
+/**
+ * {@link CompilationCustomizer} that defines typed final fields and constructor initializing the fields from the only
+ * parameter of type {@code Map<String, ?>}.
+ * <p>
+ *     This customizer is executed at {@link org.codehaus.groovy.control.CompilePhase#CONVERSION CONVERSION} phase.
+ * </p>
+ *
+ * @see #FinalFieldsFromMapParam(Map) constructor
+ */
 public class FinalFieldsFromMapParam extends CompilationCustomizer {
     private final Map<String, ClassNode> fieldDefinitions;
 
+    /**
+     * Constructs {@code FinalFieldsFromMapParam} customizer that is configured to define typed final fields and
+     * constructor initializing the fields from the only parameter of type, assignable to {@code Map<String, ?>}.
+     *
+     * @param fieldDefinitions
+     * Final fields definitions in the form of map, where the key defines both the field name and the key in the map,
+     * accepted by a constructor, and the value defines the final field type.
+     */
     public FinalFieldsFromMapParam(Map<String, ClassNode> fieldDefinitions) {
         super(CONVERSION);
         this.fieldDefinitions = fieldDefinitions;
