@@ -6,6 +6,7 @@ import org.sandbox.groovy.customizers.SamInterfaceImplementation;
 
 import java.lang.reflect.Constructor;
 import java.util.Map;
+import java.util.Random;
 import java.util.function.ToDoubleFunction;
 
 import static java.util.Arrays.asList;
@@ -20,23 +21,37 @@ import static org.sandbox.groovy.Customizers.staticImports;
 import static org.sandbox.groovy.Customizers.varsFromMap;
 
 public class GroovyCompilerTest {
+    private static final String SCRIPT_TEXT = "" +
+            "static double pow2(double x) { x * x }\n" +
+            "double random() { rnd.nextDouble() }\n"+
+            "\n" +
+            "random() + sqrt(pow2(x) + pow2(y))";
+
+    private static ClassNode TARGET_INTERFACE = classNode(
+            ToDoubleFunction.class,
+            classNode(Map.class, String.class, wildcard(Number.class))
+    );
+
+    private static Map<String, ClassNode> FIELDS = ImmutableMap.of(
+            "rnd", classNode(Random.class)
+    );
+
+    private static Map<String, ClassNode> PARAMS = ImmutableMap.of(
+            "x", double_TYPE,
+            "y", double_TYPE
+    );
+
     public static void main(String[] args) throws Exception {
         try (final GroovyCompiler compiler = new GroovyCompiler()) {
-            final ClassNode iface = classNode(ToDoubleFunction.class, classNode(Map.class, String.class, wildcard()));
-//            final ClassNode iface = classNode(MyFn.class);
+            final SamInterfaceImplementation samImpl = samImplementation(TARGET_INTERFACE);
 
-            final SamInterfaceImplementation samImpl = samImplementation(iface);
-
-            final Class<?> clazz = compiler.compile("A + sqrt(B) - 1 + C\n")
-                    .with( staticImports(Math.class, "sqrt") )
-                    .with( pojoClass() )
-                    .with( fieldsFromMap(ImmutableMap.of("C", double_TYPE)) )
-                    .with( samImpl )
-                    .with( paramNames(samImpl::getSamImpl, "params") )
-                    .with( varsFromMap(samImpl::getSamImpl, "params", ImmutableMap.of(
-                            "A", double_TYPE,
-                            "B", double_TYPE
-                    )) )
+            final Class<?> clazz = compiler.compile(SCRIPT_TEXT)
+                    .with(staticImports(Math.class, "sqrt"))
+                    .with(pojoClass())
+                    .with(fieldsFromMap(FIELDS))
+                    .with(samImpl)
+                    .with(paramNames(samImpl::getSamImpl, "params"))
+                    .with(varsFromMap(samImpl::getSamImpl, "params", PARAMS))
                     .toClass();
 
             System.out.println("Class: " + clazz.getCanonicalName());
@@ -46,20 +61,19 @@ public class GroovyCompilerTest {
             System.out.println("Public methods: " + asList(clazz.getMethods()));
 
 
-            System.out.println("Creating instance with default ctor");
-            Constructor<?> ctor = clazz.getConstructor(Map.class);
+            System.out.println("Creating instance with");
+            final Constructor<?> ctor = clazz.getConstructor(Map.class);
             @SuppressWarnings("unchecked")
             final ToDoubleFunction<Map<String, Object>> fn = (ToDoubleFunction<Map<String, Object>>) ctor.newInstance(
-                    ImmutableMap.of("C", 200d)
+                    ImmutableMap.of("rnd", new Random())
             );
-//            final MyFn fn = (MyFn) clazz.newInstance();
             System.out.println("Created instance: " + fn);
 
-            System.out.println(fn.applyAsDouble(ImmutableMap.of(
-                    "A", -1d,
-                    "B", 4d,
-                    "D", 100d
-            )));
+            final double result = fn.applyAsDouble(ImmutableMap.of(
+                    "x", 3d,
+                    "y", 4d
+            ));
+            System.out.println("fn(x = 3, y = 4) = " + result);
         }
     }
 }
