@@ -107,7 +107,7 @@ public class SamInterfaceImplementation extends CompilationCustomizer {
     }
 
     private static ClassNode requireSamInterface(ClassNode classNode) {
-        if (isSAMType(classNode)) {
+        if (classNode.isInterface() && isSAMType(classNode)) {
             return classNode;
         }
 
