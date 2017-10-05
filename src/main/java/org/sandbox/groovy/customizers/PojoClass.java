@@ -46,5 +46,7 @@ public class PojoClass extends CompilationCustomizer {
                 .stream()
                 .collect(toList())
                 .forEach(classNode::removeMethod);
+
+        module.getMethods().forEach(classNode::addMethod);
     }
 }
