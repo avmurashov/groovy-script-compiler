@@ -14,9 +14,10 @@ import static org.codehaus.groovy.ast.tools.GenericsUtils.makeClassSafeWithGener
  * Utilities for the {@link ClassNode} objects construction.
  *
  * @see #classNode(Class, Object...) classNode
- * @see #wildcard(ClassNode...)
+ * @see #wildcard(Object...)
  */
 public class ClassNodes {
+    private static final ClassNode[] CLASS_NODES = {};
     private static final GenericsType[] GENERICS_TYPES = {};
 
     /**
@@ -53,15 +54,26 @@ public class ClassNodes {
     /**
      * Constructs {@code GenericsType} that represents a wildcard.
      *
-     * @param upperBounds Upper bounds for wildcard, if missed, the {@link Object} is taken as upper bound.
+     * @param upperBounds
+     * Upper bounds for wildcard, if missed, the {@link Object} is taken as upper bound. Supported:
+     * <ul>
+     *     <li> {@link Class} </li>
+     *     <li> {@link ClassNode} </li>
+     * </ul>
+     *
      * @return {@code GenericsType} that represents a wildcard.
      */
-    public static GenericsType wildcard(ClassNode... upperBounds) {
+    public static GenericsType wildcard(Object... upperBounds) {
         if (upperBounds == null || upperBounds.length == 0) {
             return buildWildcardType(OBJECT_TYPE);
-        } else {
-            return buildWildcardType(upperBounds);
         }
+
+        final ClassNode[] safeUpperBounds = stream(upperBounds)
+                .map(ClassNodes::safeClassNode)
+                .collect(toList())
+                .toArray(CLASS_NODES);
+
+        return buildWildcardType(safeUpperBounds);
     }
 
     private static ClassNode safeClassNode(Object object) {
