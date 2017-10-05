@@ -22,14 +22,17 @@ public class ClassNodes {
     /**
      * Constructs {@code ClassNode} that represents the given Java class.
      *
-     * @param clazz Target class to construct {@code ClassNode} for.
-     * @param genericTypes Generic type arguments. Should be provided if the target class is a generic class. Number and
-     *                     order of generic type arguments should match generic type declaration. Supported:
-     *                     <ul>
-     *                     <li> {@link Class} </li>
-     *                     <li> {@link ClassNode} </li>
-     *                     <li> {@link GenericsType} </li>
-     *                     </ul>
+     * @param clazz
+     * Target class to construct {@code ClassNode} for.
+     * @param genericTypes
+     * Generic type arguments. Should be provided if the target class is a generic class. Number and order of generic
+     * type arguments should match generic type declaration. Supported:
+     * <ul>
+     *     <li> {@link Class} </li>
+     *     <li> {@link ClassNode} </li>
+     *     <li> {@link GenericsType} </li>
+     * </ul>
+     *
      * @return {@code ClassNode} that represents the given Java class.
      */
     public static ClassNode classNode(Class<?> clazz, Object... genericTypes) {

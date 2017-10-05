@@ -52,8 +52,9 @@ public class GroovyCompiler implements AutoCloseable {
 
     /**
      * Closes given {@code GroovyCompiler}.
-     * <p/>
-     * All the compiled Java classes will stay intact after close.
+     * <p>
+     *     All the compiled Java classes will stay intact after close.
+     * </p>
      *
      * @throws Exception If any issue happened.
      */
