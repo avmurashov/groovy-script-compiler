@@ -78,8 +78,9 @@ public class SamInterfaceImplementation extends CompilationCustomizer {
 
         samImpl.addAnnotations(sam.getAnnotations());
 
-        samImpl.setSourcePosition(sam);
         samImpl.copyNodeMetaData(sam);
+        samImpl.copyNodeMetaData(code);
+        samImpl.setSourcePosition(code);
 
         classNode.addInterface(samInterface);
         classNode.addMethod(samImpl);
