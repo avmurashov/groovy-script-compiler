@@ -4,6 +4,7 @@ import org.codehaus.groovy.ast.ClassNode;
 import org.codehaus.groovy.ast.MethodNode;
 import org.codehaus.groovy.control.customizers.CompilationCustomizer;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
+import org.sandbox.groovy.customizers.ExplicitToString;
 import org.sandbox.groovy.customizers.FinalFieldsFromMapParam;
 import org.sandbox.groovy.customizers.MethodParamNames;
 import org.sandbox.groovy.customizers.PojoClass;
@@ -25,6 +26,7 @@ import static java.util.Arrays.stream;
  * @see #paramNames(Supplier, String...) paramNames
  * @see #varsFromMap(Supplier, String, Map) varsFromMap
  * @see #fieldsFromMap(Map) fieldsFromMap
+ * @see #explicitToString() explicitToString
  */
 public class Customizers {
     /**
@@ -125,5 +127,16 @@ public class Customizers {
      */
     public static FinalFieldsFromMapParam fieldsFromMap(Map<String, ClassNode> fieldDefinitions) {
         return new FinalFieldsFromMapParam(fieldDefinitions);
+    }
+
+    /**
+     * Constructs {@link ExplicitToString} customizer that defines {@code toString()} method, listing the non-static
+     * non-synthetic fields.
+     *
+     * @return {@link ExplicitToString} customizer that defines {@code toString()} method, listing the non-static
+     * non-synthetic fields.
+     */
+    public static ExplicitToString explicitToString() {
+        return new ExplicitToString();
     }
 }

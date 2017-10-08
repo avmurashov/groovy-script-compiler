@@ -13,12 +13,7 @@ import static java.util.Arrays.asList;
 import static org.codehaus.groovy.ast.ClassHelper.double_TYPE;
 import static org.sandbox.groovy.ClassNodes.classNode;
 import static org.sandbox.groovy.ClassNodes.wildcard;
-import static org.sandbox.groovy.Customizers.fieldsFromMap;
-import static org.sandbox.groovy.Customizers.paramNames;
-import static org.sandbox.groovy.Customizers.pojoClass;
-import static org.sandbox.groovy.Customizers.samImplementation;
-import static org.sandbox.groovy.Customizers.staticImports;
-import static org.sandbox.groovy.Customizers.varsFromMap;
+import static org.sandbox.groovy.Customizers.*;
 
 public class GroovyCompilerTest {
     private static final String SCRIPT_TEXT = "" +
@@ -52,6 +47,7 @@ public class GroovyCompilerTest {
                     .with(samImpl)
                     .with(paramNames(samImpl::getSamImpl, "params"))
                     .with(varsFromMap(samImpl::getSamImpl, "params", PARAMS))
+                    .with(explicitToString())
                     .toClass();
 
             System.out.println("Class: " + clazz.getCanonicalName());
