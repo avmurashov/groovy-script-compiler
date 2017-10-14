@@ -82,7 +82,7 @@ public class GroovyCompiler implements AutoCloseable {
      *     </ul>
      * </p>
      * <p>
-     *     {@code GroovyCompilation} may be customized {@link #with(CompilationCustomizer...) with} standard Groovy
+     *     {@code GroovyCompilation} may be {@link #thenApply(CompilationCustomizer...) customized} with standard Groovy
      *     {@link CompilationCustomizer}-s. After all customizations are set up, one should trigger compilation {@link
      *     #toClass() to Class}.
      * </p>
@@ -117,11 +117,15 @@ public class GroovyCompiler implements AutoCloseable {
 
         /**
          * Customizes the given {@code GroovyCompilation} with specified {@code CompilationCustomizer}-s.
+         * <p>
+         *     {@code CompilationCustomizer}-s of the same compilation phase are applied in the order they were
+         *     registered with given method.
+         * </p>
          *
          * @param compilationCustomizers compilation customizers to use for this Groovy compilation.
          * @return This {@code GroovyCompilation} after all the {@code compilationCustomizers} are registered.
          */
-        public GroovyCompilation with(CompilationCustomizer... compilationCustomizers) {
+        public GroovyCompilation thenApply(CompilationCustomizer... compilationCustomizers) {
             configuration.addCompilationCustomizers(compilationCustomizers);
             return this;
         }
@@ -129,8 +133,8 @@ public class GroovyCompiler implements AutoCloseable {
         /**
          * Compiles Groovy code to Java {@link Class}.
          *
-         * @return {@code Class} constructed for the Groovy code {@link #with(CompilationCustomizer...) with} the help
-         * of registered {@code CompilationCustomizer}-s.
+         * @return {@code Class} constructed for the Groovy code, {@link #thenApply(CompilationCustomizer...)
+         * customized} with the help of registered {@code CompilationCustomizer}-s.
          * @throws RuntimeException If any issue happened. Notice that any {@code RuntimeException} may be thrown, not
          * only the {@link CompilationFailedException}.
          */

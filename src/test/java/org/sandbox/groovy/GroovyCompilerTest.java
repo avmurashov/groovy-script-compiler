@@ -41,13 +41,13 @@ public class GroovyCompilerTest {
             final SamInterfaceImplementation samImpl = samImplementation(TARGET_INTERFACE);
 
             final Class<?> clazz = compiler.compile(SCRIPT_TEXT)
-                    .with(staticImports(Math.class, "sqrt"))
-                    .with(pojoClass())
-                    .with(fieldsFromMap(FIELDS))
-                    .with(samImpl)
-                    .with(paramNames(samImpl::getSamImpl, "params"))
-                    .with(varsFromMap(samImpl::getSamImpl, "params", PARAMS))
-                    .with(explicitToString())
+                    .thenApply(staticImports(Math.class, "sqrt"))
+                    .thenApply(pojoClass())
+                    .thenApply(fieldsFromMap(FIELDS))
+                    .thenApply(samImpl)
+                    .thenApply(paramNames(samImpl::getSamImpl, "params"))
+                    .thenApply(varsFromMap(samImpl::getSamImpl, "params", PARAMS))
+                    .thenApply(explicitToString())
                     .toClass();
 
             System.out.println("Class: " + clazz.getCanonicalName());
@@ -57,7 +57,7 @@ public class GroovyCompilerTest {
             System.out.println("Public methods: " + asList(clazz.getMethods()));
 
 
-            System.out.println("Creating instance with");
+            System.out.println("Creating instance");
             final Constructor<?> ctor = clazz.getConstructor(Map.class);
             @SuppressWarnings("unchecked")
             final ToDoubleFunction<Map<String, Object>> fn = (ToDoubleFunction<Map<String, Object>>) ctor.newInstance(
