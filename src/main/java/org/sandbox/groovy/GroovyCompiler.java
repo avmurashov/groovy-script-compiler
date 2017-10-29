@@ -204,15 +204,16 @@ public class GroovyCompiler implements AutoCloseable {
          * class.
          *
          * @param clazz Class whose static members to import during the source code compilation.
-         * @param members Names of the {@code clazz}' static members to import. If empty, the star import will be used.
+         * @param staticMembers Names of the {@code clazz}' static members to import. If empty, the star import will be
+         * used.
          * @return This {@code GroovyCompilation} after the {@code ImportCustomizer} is registered.
          */
-        public GroovyCompilation thenApplyStaticImports(Class<?> clazz, String... members) {
+        public GroovyCompilation thenApplyStaticImports(Class<?> clazz, String... staticMembers) {
             final String className = clazz.getCanonicalName();
             final ImportCustomizer importCustomizer = new ImportCustomizer();
 
-            if (members != null && members.length > 0) {
-                stream(members).forEach(member -> importCustomizer.addStaticImport(className, member));
+            if (staticMembers != null && staticMembers.length > 0) {
+                stream(staticMembers).forEach(member -> importCustomizer.addStaticImport(className, member));
             } else {
                 importCustomizer.addStaticStars(className);
             }
