@@ -15,7 +15,7 @@ import static org.codehaus.groovy.ast.ClassHelper.double_TYPE;
 import static org.sandbox.groovy.ClassNodes.classNode;
 import static org.sandbox.groovy.ClassNodes.wildcard;
 
-public class GroovyCompilerTest {
+public class GroovyCompilerSampleApp {
     private static final String SCRIPT_TEXT = "" +
             "static double pow2(double x) { x * x }\n" +
             "double random() { rnd.nextDouble() }\n"+
