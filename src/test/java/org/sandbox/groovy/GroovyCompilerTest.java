@@ -7,13 +7,13 @@ import org.sandbox.groovy.customizers.SamInterfaceImplementation;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
 
 import static java.util.Arrays.asList;
 import static org.codehaus.groovy.ast.ClassHelper.double_TYPE;
 import static org.sandbox.groovy.ClassNodes.classNode;
 import static org.sandbox.groovy.ClassNodes.wildcard;
-import static org.sandbox.groovy.Customizers.*;
 
 public class GroovyCompilerTest {
     private static final String SCRIPT_TEXT = "" +
@@ -38,16 +38,17 @@ public class GroovyCompilerTest {
 
     public static void main(String[] args) throws Exception {
         try (final GroovyCompiler compiler = new GroovyCompiler()) {
-            final SamInterfaceImplementation samImpl = samImplementation(TARGET_INTERFACE);
+            final SamInterfaceImplementation samImpl = new SamInterfaceImplementation(TARGET_INTERFACE);
 
             final Class<?> clazz = compiler.compile(SCRIPT_TEXT)
-                    .thenApply(staticImports(Math.class, "sqrt"))
-                    .thenApply(pojoClass())
-                    .thenApply(fieldsFromMap(FIELDS))
+                    .thenApplyImports(Function.class)
+                    .thenApplyStaticImports(Math.class, "sqrt")
+                    .thenApplyPojoClass()
+                    .thenApplyFieldsFromMap(FIELDS)
                     .thenApply(samImpl)
-                    .thenApply(paramNames(samImpl::getSamImpl, "params"))
-                    .thenApply(varsFromMap(samImpl::getSamImpl, "params", PARAMS))
-                    .thenApply(explicitToString())
+                    .thenApplyParamNames(samImpl::getSamImpl, "params")
+                    .thenApplyVarsFromMap(samImpl::getSamImpl, "params", PARAMS)
+                    .thenApplyExplicitToString()
                     .toClass();
 
             System.out.println("Class: " + clazz.getCanonicalName());
