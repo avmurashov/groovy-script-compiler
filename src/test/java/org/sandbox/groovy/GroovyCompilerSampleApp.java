@@ -40,7 +40,7 @@ public class GroovyCompilerSampleApp {
         try (final GroovyCompiler compiler = new GroovyCompiler()) {
             final SamInterfaceImplementation samImpl = new SamInterfaceImplementation(TARGET_INTERFACE);
 
-            final Class<?> clazz = compiler.compile(SCRIPT_TEXT)
+            final Class<?> clazz = compiler.takeSourceCode(SCRIPT_TEXT)
                     .thenApplyImports(Function.class)
                     .thenApplyStaticImports(Math.class, "sqrt")
                     .thenApplyPojoClass()
@@ -49,7 +49,7 @@ public class GroovyCompilerSampleApp {
                     .thenApplyParamNames(samImpl::getSamImpl, "params")
                     .thenApplyVarsFromMap(samImpl::getSamImpl, "params", PARAMS)
                     .thenApplyExplicitToString()
-                    .toClass();
+                    .thenCompile();
 
             System.out.println("Class: " + clazz.getCanonicalName());
             System.out.println("Super class: " + clazz.getSuperclass().getCanonicalName());

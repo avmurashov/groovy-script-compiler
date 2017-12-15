@@ -32,7 +32,8 @@ import static org.codehaus.groovy.control.Phases.OUTPUT;
 /**
  * Groovy compiler.
  * <p>
- *     This class may be used to {@link #compile(String) compile} Groovy script or class into Java byte code.
+ *     This class may be used to {@link #takeSourceCode(String) take} Groovy script or class and {@link
+ *     GroovyCompilation#thenCompile() compile} it into Java byte code.
  * </p>
  * <p>
  *     Instances of this class should be {@link #close() closed} after use. Compiled Java classes will stay intact.
@@ -58,7 +59,7 @@ public class GroovyCompiler implements AutoCloseable {
      * @param text Groovy source code text, may represent both scripts and classes.
      * @return {@code GroovyCompilation} for the given Groovy source code.
      */
-    public GroovyCompilation compile(String text) {
+    public GroovyCompilation takeSourceCode(String text) {
         return new GroovyCompilation(groovyClassLoader, text, compilerSeqNo, compilationsSeq.getAndIncrement());
     }
 
@@ -95,8 +96,8 @@ public class GroovyCompiler implements AutoCloseable {
      * </p>
      * <p>
      *     {@code GroovyCompilation} may be {@link #thenApply(CompilationCustomizer...) customized} with standard Groovy
-     *     {@link CompilationCustomizer}-s. After all customizations are set up, one should trigger compilation {@link
-     *     #toClass() to Class}.
+     *     {@link CompilationCustomizer}-s. After all customizations are set up, one should trigger {@link
+     *     #thenCompile() compilation to Class}.
      * </p>
      * <p>
      *     {@code ASTTransformationCustomizer} for {@code CompileStatic} feature is always added as the last {@code
@@ -159,7 +160,7 @@ public class GroovyCompiler implements AutoCloseable {
          * @throws RuntimeException If any issue happened. Notice that any {@code RuntimeException} may be thrown, not
          * only the {@link CompilationFailedException}.
          */
-        public Class<?> toClass() throws RuntimeException {
+        public Class<?> thenCompile() throws RuntimeException {
             try {
                 configuration.addCompilationCustomizers(new ASTTransformationCustomizer(CompileStatic.class));
 
@@ -222,7 +223,7 @@ public class GroovyCompiler implements AutoCloseable {
         }
 
         /**
-         * Registers {@link PojoClass} customizer to drop-off {@code GroovyScript} infrastructure from the script class
+         * Registers {@link PojoClass} customizer to drop-off {@code Script} infrastructure from the script class
          * definition.
          *
          * @return This {@code GroovyCompilation} after the {@code PojoClass} is registered.
