@@ -291,9 +291,9 @@ public class GroovyCompiler implements AutoCloseable {
 
         /**
          * Registers {@link ExplicitToString} customizer that defines {@code toString()} method, listing the non-static
-         * non-synthetic fields plus the script text, if the class is generated from the Groovy script.
+         * non-synthetic fields plus the Groovy script text.
          *
-         * @return This {@code GroovyCompilation} after the {@code FinalFieldsFromMapParam} is registered.
+         * @return This {@code GroovyCompilation} after the {@code ExplicitToString} is registered.
          */
         public GroovyCompilation thenApplyExplicitToString() {
             return thenApply(new ExplicitToString());
