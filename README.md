@@ -1,4 +1,4 @@
-# Groovy Compiler
+# Groovy Compiler [![Apache License 2](https://img.shields.io/badge/license-ASF2-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
 Utility library, designed to simplify Groovy scripts compilations into
 Java classes at run-time.
@@ -504,6 +504,11 @@ For convenience, `GroovyCompilation` also provides
 Both will define `toString()` method that returns textual representation
 of the given script instance that contains:
 * Actual class name
-* Identity has code
+* Identity hash code
 * List of all the declared non-synthetic fields with their values
 * Original source code of the script instance, if available.
+
+
+# License
+
+This code is licensed under [Apache 2.0 licence](https://www.apache.org/licenses/LICENSE-2.0).
